@@ -17,14 +17,10 @@
         .setup-section { margin-bottom: 15px; padding: 15px; background: #252525; border-radius: 12px; border: 1px solid #383838; }
         label { display: block; margin-bottom: 8px; font-weight: bold; color: #03dac6; font-size: 0.9em; }
         select, .setup-input { width: 100%; padding: 12px; margin-bottom: 10px; background: #333; color: white; border: 1px solid #444; border-radius: 8px; font-size: 1em; box-sizing: border-box; }
-        .mode-opt { display: flex; align-items: center; margin-bottom: 8px; font-size: 0.85em; }
-        .mode-opt input { margin-right: 10px; }
         
         .dealer-banner { background: #03dac6; color: #000; padding: 10px; text-align: center; font-weight: bold; border-radius: 10px; margin-bottom: 15px; font-size: 0.8em; text-transform: uppercase; }
-        .bomb-tip { background: #cf6679; color: white; padding: 8px; border-radius: 8px; font-size: 0.75em; margin-bottom: 10px; text-align: center; font-weight: bold; animation: shake 0.5s ease-in-out; }
+        .bomb-tip { background: #cf6679; color: white; padding: 8px; border-radius: 8px; font-size: 0.75em; margin-bottom: 10px; text-align: center; font-weight: bold; }
         
-        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
-
         table { width: 100%; border-collapse: collapse; margin-bottom: 15px; background: #222; border-radius: 12px; overflow: hidden; }
         th { background: #333; color: #03dac6; padding: 10px; font-size: 0.7em; }
         td { padding: 10px; text-align: center; border-bottom: 1px solid #2d2d2d; }
@@ -44,23 +40,25 @@
         .submit-btn { width: 100%; padding: 16px; background: #bb86fc; color: #000; border: none; border-radius: 12px; font-size: 1em; font-weight: bold; margin-top: 8px; }
 
         #modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 1000; align-items: center; justify-content: center; padding: 10px; box-sizing: border-box; }
-        .modal-content { background: #1a1a1a; padding: 15px; border-radius: 15px; width: 100%; max-width: 400px; position: relative; }
+        .modal-content { background: #1a1a1a; padding: 15px; border-radius: 15px; width: 100%; max-width: 450px; position: relative; }
         
+        /* KARTKA W KRATKĘ */
         #cap { 
             background-color: #fdfdfd !important;
             background-image: 
                 linear-gradient(to right, rgba(0, 150, 255, 0.1) 1px, transparent 1px),
                 linear-gradient(to bottom, rgba(0, 150, 255, 0.1) 1px, transparent 1px) !important;
             background-size: 20px 20px !important;
-            padding: 30px !important; color: #1a1a70 !important; font-family: 'Caveat', cursive !important; border: 1px solid #ccc;
+            padding: 20px !important; 
+            color: #1a1a70 !important; 
+            font-family: 'Caveat', cursive !important; 
+            border: 1px solid #ccc;
+            width: 350px; /* Stała szerokość dla stabilności PNG */
+            margin: auto;
         }
         #cap * { background: transparent !important; color: #1a1a70 !important; border-color: #1a1a70 !important; }
-        .paper-table { width: 100%; border-collapse: collapse; font-size: 1.4em; margin-top: 10px; border: 2px solid #1a1a70; }
-        .paper-table th, .paper-table td { border: 1px solid #1a1a70; padding: 8px; text-align: center; }
-
-        .donate-box { color: #f0f0f0; text-align: left; }
-        .donate-box h3 { color: #cf6679; text-align: center; margin-top: 0; }
-        .copy-field { background: #000; padding: 12px; border-radius: 8px; border: 1px solid #444; color: #03dac6; font-family: monospace; font-size: 0.9em; margin: 10px 0; display: block; word-break: break-all; cursor: pointer; }
+        .paper-table { width: 100%; border-collapse: collapse; border: 2px solid #1a1a70; }
+        .paper-table th, .paper-table td { border: 1px solid #1a1a70; text-align: center; }
 
         .listening { background: #cf6679 !important; animation: pulse 1s infinite; }
         @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(207,102,121, 0.7); } 100% { box-shadow: 0 0 0 10px rgba(207,102,121, 0); } }
@@ -77,7 +75,7 @@
         <div class="author-tag">Asystent Punktacji by Daniel Ćwikła</div>
         
         <div id="resumeSection" class="setup-section" style="display:none; border-color: #03dac6;">
-            <button class="submit-btn" onclick="resumeGame()">KONTYNUUJ OSTATNIĄ GRĘ</button>
+            <button class="submit-btn" onclick="resumeGame()">KONTYNUUJ GRĘ</button>
         </div>
 
         <div class="setup-section">
@@ -99,7 +97,7 @@
 
     <div id="game" style="display:none;">
         <div id="dealerBanner" class="dealer-banner"></div>
-        <div id="bombInstruction" class="bomb-tip" style="display:none;">⚠️ GRA W 4: Najpierw wpisz punkty z musika u gracza, a dopiero potem naciśnij bombę!</div>
+        <div id="bombInstruction" class="bomb-tip" style="display:none;">⚠️ GRA W 4: Najpierw punkty z musika, potem bomba!</div>
         <button id="globalMic" class="main-mic" onclick="tryVoiceGlobal()">🎤</button>
         <table>
             <thead><tr><th>Gracz</th><th>Suma</th><th>💣</th></tr></thead>
@@ -112,7 +110,7 @@
 
     <div id="podium" style="display:none; text-align:center;">
         <h2>Koniec Gry 🏆</h2><div id="pList"></div>
-        <button class="submit-btn" onclick="showHistory()">POBIERZ KARTKĘ W KRATKĘ</button>
+        <button class="submit-btn" onclick="showHistory()">POBIERZ KARTKĘ PNG</button>
         <button class="submit-btn" style="background:#444;" onclick="clearStorage()">NOWA GRA</button>
     </div>
 </div>
@@ -124,19 +122,15 @@
         const modal = document.getElementById('modal');
         modal.style.display = 'flex';
         document.getElementById('modalBody').innerHTML = `
-            <div class="donate-box">
-                <h3>Wesprzyj projekt ❤️</h3>
-                <label>Odbiorca:</label>
-                <div class="copy-field">Daniel Ćwikła</div>
+            <div style="color:white; text-align:left;">
+                <h3 style="color:#cf6679; text-align:center;">Wesprzyj projekt ❤️</h3>
+                <label>Odbiorca:</label><div style="background:#000; padding:10px; margin-bottom:10px;">Daniel Ćwikła</div>
                 <label>Numer konta (kliknij by skopiować):</label>
-                <div class="copy-field" onclick="copyAccount('89291000062469800209856716')">89 2910 0006 2469 8002 0985 6716</div>
-                <label>Bank:</label>
-                <div style="font-size:0.8em; margin-bottom:15px; color:#aaa;">UniCredit NV/SA Oddział w Polsce<br>Dobra 40, 00-344, Warszawa</div>
-                <button class="submit-btn" style="background:#444; color:#fff;" onclick="document.getElementById('modal').style.display='none'">ZAMKNIJ</button>
+                <div style="background:#000; padding:10px; color:#03dac6; cursor:pointer;" onclick="copyAccount('89291000062469800209856716')">89 2910 0006 2469 8002 0985 6716</div>
+                <button class="submit-btn" onclick="document.getElementById('modal').style.display='none'">ZAMKNIJ</button>
             </div>`;
     }
-
-    function copyAccount(num) { navigator.clipboard.writeText(num); alert("Skopiowano numer konta!"); }
+    function copyAccount(n) { navigator.clipboard.writeText(n); alert("Skopiowano!"); }
 
     function adjustInputs() {
         const c = document.getElementById('playerCount').value;
@@ -151,8 +145,7 @@
         bombLimit = parseInt(document.getElementById('bombCount').value);
         config = { quick: document.getElementById('mQuick').checked, mini: document.getElementById('mMini').checked, global: document.getElementById('mGlobal').checked };
         for(let i=1; i<=c; i++) players.push({ name: document.getElementById(`p${i}`).value.trim() || `G${i}`, score: 0, bombs: bombLimit });
-        document.getElementById('setup').style.display='none';
-        document.getElementById('game').style.display='block';
+        document.getElementById('setup').style.display='none'; document.getElementById('game').style.display='block';
         if(config.global) document.getElementById('globalMic').style.display = 'flex';
         render();
     }
@@ -162,29 +155,21 @@
         const entry = document.getElementById('entryArea');
         const bidIdx = (dealerIdx + 1) % players.length;
         document.getElementById('dealerBanner').innerText = `ROZDAJE: ${players[dealerIdx].name}`;
-        
-        // Pokaż instrukcję tylko przy 4 graczach
         document.getElementById('bombInstruction').style.display = players.length === 4 ? 'block' : 'none';
-
         tbody.innerHTML = ''; entry.innerHTML = '';
         players.forEach((p, i) => {
             tbody.innerHTML += `<tr><td>${p.name}${i===bidIdx?'*':''}</td><td>${p.score}</td><td>${"💣".repeat(p.bombs)}</td></tr>`;
-            let html = `<div class="player-box ${i===bidIdx?'is-bidder-box':''}">
+            entry.innerHTML += `<div class="player-box ${i===bidIdx?'is-bidder-box':''}">
                 <div style="display:flex; justify-content:space-between; align-items:center;">
                     <span><strong>${p.name}</strong></span>
                     <div style="display:flex; align-items:center;">
-                        ${(i===bidIdx && p.bombs > 0)? `<button style="background:#cf6679; border:none; padding:5px; border-radius:5px; margin-right:5px; font-size:1.2em;" onclick="useBomb(${i})">💣</button>` : ''}
+                        ${(i===bidIdx && p.bombs > 0)? `<button style="background:#cf6679; border:none; padding:5px; border-radius:5px; margin-right:5px;" onclick="useBomb(${i})">💣</button>` : ''}
                         <input type="text" inputmode="decimal" id="score${i}" value="0" class="score-input" onfocus="if(this.value=='0')this.value=''" oninput="this.value = this.value.replace(/[.,]/g, '-')" onkeydown="handleEnter(event, ${i})">
                         <button class="voice-mini" id="vbtn${i}" onclick="tryVoiceMini(${i})" style="display:${config.mini?'flex':'none'}">🎤</button>
                     </div>
-                </div>`;
-            if(config.quick) {
-                html += `<div class="q-btns">
-                    <button class="q-btn" onclick="addS(${i}, 100)">+100</button><button class="q-btn" onclick="addS(${i}, 50)">+50</button><button class="q-btn" onclick="addS(${i}, 20)">+20</button><button class="q-btn" onclick="addS(${i}, 10)">+10</button>
-                    <button class="q-btn minus" onclick="addS(${i}, -100)">-100</button><button class="q-btn minus" onclick="addS(${i}, -20)">-20</button><button class="q-btn minus" onclick="addS(${i}, -10)">-10</button><button class="q-btn clear" onclick="setS(${i}, 0)">C</button>
-                </div>`;
-            }
-            entry.innerHTML += html + `</div>`;
+                </div>
+                ${config.quick ? `<div class="q-btns"><button class="q-btn" onclick="addS(${i}, 100)">+100</button><button class="q-btn" onclick="addS(${i}, 50)">+50</button><button class="q-btn minus" onclick="addS(${i}, -100)">-100</button><button class="q-btn clear" onclick="setS(${i}, 0)">C</button></div>` : ''}
+            </div>`;
         });
     }
 
@@ -201,12 +186,56 @@
     }
 
     function useBomb(idx) {
-        if(!confirm("Użyć bomby? Pamiętaj o wcześniejszym wpisaniu punktów z musika!")) return;
+        if(!confirm("Użyć bomby? Pamiętaj o punktach z musika!")) return;
         players[idx].bombs--;
         players.forEach((p, i) => { if(i !== idx && p.score < 800) { if(players.length === 4 && i === dealerIdx) return; p.score += 60; } });
         nextRound(idx);
     }
 
+    function showWin() { document.getElementById('game').style.display='none'; document.getElementById('podium').style.display='block'; const sorted = [...players].sort((a,b) => b.score - a.score); document.getElementById('pList').innerHTML = sorted.map((p,i) => `<div class="setup-section">${i+1}. ${p.name}: ${p.score} pkt</div>`).join(''); }
+    
+    function showHistory() {
+        const modal = document.getElementById('modal'); modal.style.display = 'flex';
+        const dzis = new Date().toLocaleDateString('pl-PL');
+        
+        // LOGIKA SKALOWANIA CZCIONKI
+        const rowCount = historyRows.length;
+        let fontSize = 1.4; // domyślnie
+        let padding = 8;
+        if(rowCount > 10) { fontSize = 1.1; padding = 6; }
+        if(rowCount > 20) { fontSize = 0.9; padding = 4; }
+        if(rowCount > 25) { fontSize = 0.75; padding = 2; }
+
+        // Limit do 30 rozdań
+        const rowsToShow = historyRows.slice(-30);
+        const startIdx = historyRows.length > 30 ? historyRows.length - 30 : 0;
+
+        document.getElementById('modalBody').innerHTML = `
+            <div id="cap">
+                <div style="text-align:right; font-size:0.8em; margin-bottom:5px;">${dzis}</div>
+                <h2 style="text-align:center; margin:0 0 10px 0; font-size:1.5em;">WYNIKI GRY</h2>
+                <table class="paper-table" style="font-size:${fontSize}em;">
+                    <thead><tr><th style="padding:${padding}px">#</th>${players.map(p => `<th style="padding:${padding}px">${p.name}</th>`).join('')}</tr></thead>
+                    <tbody>${rowsToShow.map((r, i) => `<tr><td style="padding:${padding}px">${startIdx + i + 1}</td>${r.map((s, pIdx) => `<td style="padding:${padding}px">${bombLog.some(b => b.round === (startIdx+i+1) && b.player === pIdx) ? '💣' : s}</td>`).join('')}</tr>`).join('')}</tbody>
+                </table>
+                <div style="margin-top:15px; text-align:center; font-size:0.7em; border-top:1px solid #1a1a70; padding-top:5px;">Asystent Punktacji by Daniel Ćwikła</div>
+            </div>
+            <button class="submit-btn" onclick="downloadImg()">ZAPISZ PNG</button>
+            <button class="submit-btn" style="background:#444;" onclick="document.getElementById('modal').style.display='none'">POWRÓT</button>`;
+    }
+
+    function downloadImg() {
+        html2canvas(document.getElementById('cap'), { backgroundColor: "#fdfdfd", scale: 3 }).then(canvas => {
+            const link = document.createElement('a'); link.download = 'wyniki_1000.png'; link.href = canvas.toDataURL(); link.click();
+        });
+    }
+
+    function save() { localStorage.setItem('tysiac_final_v1', JSON.stringify({players, dealerIdx, historyRows, bombLimit, config, bombLog})); }
+    function resumeGame() { const d = JSON.parse(localStorage.getItem('tysiac_final_v1')); players = d.players; dealerIdx = d.dealerIdx; historyRows = d.historyRows; bombLimit = d.bombLimit; config = d.config; bombLog = d.bombLog || []; document.getElementById('setup').style.display='none'; document.getElementById('game').style.display='block'; if(config.global) document.getElementById('globalMic').style.display = 'flex'; render(); }
+    function clearStorage() { localStorage.removeItem('tysiac_final_v1'); location.reload(); }
+    function undo() { if(!historyRows.length) return; historyRows.pop(); bombLog = bombLog.filter(b => b.round <= historyRows.length); if(!historyRows.length) { players.forEach(p => p.score = 0); dealerIdx = 0; } else { const ls = historyRows[historyRows.length-1]; players.forEach((p, i) => p.score = ls[i]); dealerIdx = (dealerIdx - 1 + players.length) % players.length; } save(); render(); }
+    
+    // Obsługa mowy
     function tryVoiceGlobal() {
         const Speech = window.SpeechRecognition || window.webkitSpeechRecognition;
         if(!Speech) return;
@@ -215,18 +244,10 @@
         rec.onend = () => document.getElementById('globalMic').classList.remove('listening');
         rec.onresult = (e) => {
             const t = e.results[0][0].transcript.toLowerCase();
-            players.forEach((p, i) => {
-                if (t.includes(p.name.toLowerCase())) {
-                    const seg = t.split(p.name.toLowerCase())[1].trim();
-                    let isMinus = seg.includes("minus") || seg.includes("-");
-                    let num = seg.match(/\d+/);
-                    if(num) document.getElementById(`score${i}`).value = isMinus ? -num[0] : num[0];
-                }
-            });
+            players.forEach((p, i) => { if (t.includes(p.name.toLowerCase())) { const seg = t.split(p.name.toLowerCase())[1].trim(); let isM = seg.includes("minus") || seg.includes("-"); let n = seg.match(/\d+/); if(n) document.getElementById(`score${i}`).value = isM ? -n[0] : n[0]; } });
         };
         rec.start();
     }
-
     function tryVoiceMini(idx) {
         const Speech = window.SpeechRecognition || window.webkitSpeechRecognition;
         if(!Speech) return;
@@ -235,43 +256,12 @@
         rec.onend = () => document.getElementById(`vbtn${idx}`).classList.remove('listening');
         rec.onresult = (e) => {
             const t = e.results[0][0].transcript.toLowerCase();
-            let isMinus = t.includes("minus") || t.includes("-");
-            let num = t.match(/\d+/);
-            if(num) document.getElementById(`score${idx}`).value = isMinus ? -num[0] : num[0];
+            let isM = t.includes("minus") || t.includes("-"); let n = t.match(/\d+/);
+            if(n) document.getElementById(`score${idx}`).value = isM ? -n[0] : n[0];
         };
         rec.start();
     }
-
-    function showWin() { document.getElementById('game').style.display='none'; document.getElementById('podium').style.display='block'; const sorted = [...players].sort((a,b) => b.score - a.score); document.getElementById('pList').innerHTML = sorted.map((p,i) => `<div class="setup-section">${i+1}. ${p.name}: ${p.score} pkt</div>`).join(''); }
-    
-    function showHistory() {
-        const modal = document.getElementById('modal'); modal.style.display = 'flex';
-        const dzis = new Date().toLocaleDateString('pl-PL');
-        document.getElementById('modalBody').innerHTML = `
-            <div id="cap">
-                <div style="text-align:right; font-size:1.1em; margin-bottom:5px;">${dzis}</div>
-                <h2 style="text-align:center; margin:0 0 15px 0; text-decoration: underline;">WYNIKI GRY</h2>
-                <table class="paper-table">
-                    <thead><tr><th>#</th>${players.map(p => `<th>${p.name}</th>`).join('')}</tr></thead>
-                    <tbody>${historyRows.map((r, i) => `<tr><td>${i+1}</td>${r.map((s, pIdx) => `<td>${bombLog.some(b => b.round === i+1 && b.player === pIdx) ? '💣' : s}</td>`).join('')}</tr>`).join('')}</tbody>
-                </table>
-                <div style="margin-top:20px; text-align:center; font-size:0.9em; border-top:1px solid #1a1a70; padding-top:10px;">Asystent Punktacji by Daniel Ćwikła</div>
-            </div>
-            <button class="submit-btn" onclick="downloadImg()">ZAPISZ PNG</button>
-            <button class="submit-btn" style="background:#444; color:#fff;" onclick="document.getElementById('modal').style.display='none'">POWRÓT</button>`;
-    }
-
-    function downloadImg() {
-        html2canvas(document.getElementById('cap'), { backgroundColor: "#fdfdfd", scale: 3 }).then(canvas => {
-            const link = document.createElement('a'); link.download = 'tysiac_wyniki.png'; link.href = canvas.toDataURL(); link.click();
-        });
-    }
-
-    function save() { localStorage.setItem('tysiac_daniel_fixed', JSON.stringify({players, dealerIdx, historyRows, bombLimit, config, bombLog})); }
-    function resumeGame() { const d = JSON.parse(localStorage.getItem('tysiac_daniel_fixed')); players = d.players; dealerIdx = d.dealerIdx; historyRows = d.historyRows; bombLimit = d.bombLimit; config = d.config; bombLog = d.bombLog || []; document.getElementById('setup').style.display='none'; document.getElementById('game').style.display='block'; if(config.global) document.getElementById('globalMic').style.display = 'flex'; render(); }
-    function clearStorage() { localStorage.removeItem('tysiac_daniel_fixed'); location.reload(); }
-    function undo() { if(!historyRows.length) return; historyRows.pop(); bombLog = bombLog.filter(b => b.round <= historyRows.length); if(!historyRows.length) { players.forEach(p => p.score = 0); dealerIdx = 0; } else { const ls = historyRows[historyRows.length-1]; players.forEach((p, i) => p.score = ls[i]); dealerIdx = (dealerIdx - 1 + players.length) % players.length; } save(); render(); }
-    window.onload = () => { if(localStorage.getItem('tysiac_daniel_fixed')) document.getElementById('resumeSection').style.display = 'block'; };
+    window.onload = () => { if(localStorage.getItem('tysiac_final_v1')) document.getElementById('resumeSection').style.display = 'block'; };
 </script>
 </body>
 </html>
