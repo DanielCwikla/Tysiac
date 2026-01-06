@@ -32,7 +32,7 @@
         .score-input:focus { border-color: #03dac6; }
         
         .q-btns { display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px; margin-top: 10px; }
-        .q-btn { background: #3d3d3d; color: white; border: none; padding: 10px 2px; border-radius: 6px; font-size: 0.8em; font-weight: bold; }
+        .q-btn { background: #3d3d3d; color: white; border: none; padding: 10px 2px; border-radius: 6px; font-size: 0.75em; font-weight: bold; }
         .q-btn.minus { color: #cf6679; }
         
         .main-mic { background: #bb86fc; color: #000; border: none; border-radius: 50%; width: 50px; height: 50px; display: none; margin: 0 auto 10px auto; align-items: center; justify-content: center; font-size: 1.5em; }
@@ -42,7 +42,6 @@
         #modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 1000; align-items: center; justify-content: center; padding: 10px; box-sizing: border-box; }
         .modal-content { background: #1a1a1a; padding: 15px; border-radius: 15px; width: 100%; max-width: 450px; position: relative; }
         
-        /* KARTKA W KRATKĘ */
         #cap { 
             background-color: #fdfdfd !important;
             background-image: 
@@ -53,7 +52,7 @@
             color: #1a1a70 !important; 
             font-family: 'Caveat', cursive !important; 
             border: 1px solid #ccc;
-            width: 350px; /* Stała szerokość dla stabilności PNG */
+            width: 350px;
             margin: auto;
         }
         #cap * { background: transparent !important; color: #1a1a70 !important; border-color: #1a1a70 !important; }
@@ -168,7 +167,16 @@
                         <button class="voice-mini" id="vbtn${i}" onclick="tryVoiceMini(${i})" style="display:${config.mini?'flex':'none'}">🎤</button>
                     </div>
                 </div>
-                ${config.quick ? `<div class="q-btns"><button class="q-btn" onclick="addS(${i}, 100)">+100</button><button class="q-btn" onclick="addS(${i}, 50)">+50</button><button class="q-btn minus" onclick="addS(${i}, -100)">-100</button><button class="q-btn clear" onclick="setS(${i}, 0)">C</button></div>` : ''}
+                ${config.quick ? `<div class="q-btns">
+                    <button class="q-btn" onclick="addS(${i}, 100)">+100</button>
+                    <button class="q-btn" onclick="addS(${i}, 50)">+50</button>
+                    <button class="q-btn" onclick="addS(${i}, 20)">+20</button>
+                    <button class="q-btn" onclick="addS(${i}, 10)">+10</button>
+                    <button class="q-btn minus" onclick="addS(${i}, -100)">-100</button>
+                    <button class="q-btn minus" onclick="addS(${i}, -20)">-20</button>
+                    <button class="q-btn minus" onclick="addS(${i}, -10)">-10</button>
+                    <button class="q-btn clear" onclick="setS(${i}, 0)">C</button>
+                </div>` : ''}
             </div>`;
         });
     }
@@ -197,19 +205,13 @@
     function showHistory() {
         const modal = document.getElementById('modal'); modal.style.display = 'flex';
         const dzis = new Date().toLocaleDateString('pl-PL');
-        
-        // LOGIKA SKALOWANIA CZCIONKI
         const rowCount = historyRows.length;
-        let fontSize = 1.4; // domyślnie
-        let padding = 8;
+        let fontSize = 1.4; let padding = 8;
         if(rowCount > 10) { fontSize = 1.1; padding = 6; }
         if(rowCount > 20) { fontSize = 0.9; padding = 4; }
         if(rowCount > 25) { fontSize = 0.75; padding = 2; }
-
-        // Limit do 30 rozdań
         const rowsToShow = historyRows.slice(-30);
         const startIdx = historyRows.length > 30 ? historyRows.length - 30 : 0;
-
         document.getElementById('modalBody').innerHTML = `
             <div id="cap">
                 <div style="text-align:right; font-size:0.8em; margin-bottom:5px;">${dzis}</div>
@@ -230,15 +232,13 @@
         });
     }
 
-    function save() { localStorage.setItem('tysiac_final_v1', JSON.stringify({players, dealerIdx, historyRows, bombLimit, config, bombLog})); }
-    function resumeGame() { const d = JSON.parse(localStorage.getItem('tysiac_final_v1')); players = d.players; dealerIdx = d.dealerIdx; historyRows = d.historyRows; bombLimit = d.bombLimit; config = d.config; bombLog = d.bombLog || []; document.getElementById('setup').style.display='none'; document.getElementById('game').style.display='block'; if(config.global) document.getElementById('globalMic').style.display = 'flex'; render(); }
-    function clearStorage() { localStorage.removeItem('tysiac_final_v1'); location.reload(); }
+    function save() { localStorage.setItem('tysiac_final_vFinal', JSON.stringify({players, dealerIdx, historyRows, bombLimit, config, bombLog})); }
+    function resumeGame() { const d = JSON.parse(localStorage.getItem('tysiac_final_vFinal')); players = d.players; dealerIdx = d.dealerIdx; historyRows = d.historyRows; bombLimit = d.bombLimit; config = d.config; bombLog = d.bombLog || []; document.getElementById('setup').style.display='none'; document.getElementById('game').style.display='block'; if(config.global) document.getElementById('globalMic').style.display = 'flex'; render(); }
+    function clearStorage() { localStorage.removeItem('tysiac_final_vFinal'); location.reload(); }
     function undo() { if(!historyRows.length) return; historyRows.pop(); bombLog = bombLog.filter(b => b.round <= historyRows.length); if(!historyRows.length) { players.forEach(p => p.score = 0); dealerIdx = 0; } else { const ls = historyRows[historyRows.length-1]; players.forEach((p, i) => p.score = ls[i]); dealerIdx = (dealerIdx - 1 + players.length) % players.length; } save(); render(); }
     
-    // Obsługa mowy
     function tryVoiceGlobal() {
-        const Speech = window.SpeechRecognition || window.webkitSpeechRecognition;
-        if(!Speech) return;
+        const Speech = window.SpeechRecognition || window.webkitSpeechRecognition; if(!Speech) return;
         const rec = new Speech(); rec.lang = 'pl-PL';
         rec.onstart = () => document.getElementById('globalMic').classList.add('listening');
         rec.onend = () => document.getElementById('globalMic').classList.remove('listening');
@@ -249,8 +249,7 @@
         rec.start();
     }
     function tryVoiceMini(idx) {
-        const Speech = window.SpeechRecognition || window.webkitSpeechRecognition;
-        if(!Speech) return;
+        const Speech = window.SpeechRecognition || window.webkitSpeechRecognition; if(!Speech) return;
         const rec = new Speech(); rec.lang = 'pl-PL';
         rec.onstart = () => document.getElementById(`vbtn${idx}`).classList.add('listening');
         rec.onend = () => document.getElementById(`vbtn${idx}`).classList.remove('listening');
@@ -261,7 +260,7 @@
         };
         rec.start();
     }
-    window.onload = () => { if(localStorage.getItem('tysiac_final_v1')) document.getElementById('resumeSection').style.display = 'block'; };
+    window.onload = () => { if(localStorage.getItem('tysiac_final_vFinal')) document.getElementById('resumeSection').style.display = 'block'; };
 </script>
 </body>
 </html>
