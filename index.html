@@ -20,22 +20,26 @@
         table { width: 100%; border-collapse: collapse; margin-bottom: 15px; background: #222; border-radius: 12px; overflow: hidden; }
         th { background: #333; color: #03dac6; padding: 10px; font-size: 0.7em; }
         td { padding: 10px; text-align: center; border-bottom: 1px solid #2d2d2d; }
-        .player-box { background: #252525; padding: 12px; border-radius: 15px; margin-bottom: 10px; border-left: 5px solid #444; transition: all 0.2s; }
+        .player-box { background: #252525; padding: 12px; border-radius: 15px; margin-bottom: 10px; border-left: 5px solid #444; }
         .is-bidder-box { border-left-color: #bb86fc; background: #2d2636; }
         .score-input { width: 85px; padding: 12px; background: #000; border: 2px solid #444; color: #fff; border-radius: 8px; text-align: center; font-size: 1.3em; font-weight: bold; outline: none; }
-        .score-input:focus { border-color: #03dac6; color: #03dac6; }
+        .score-input:focus { border-color: #03dac6; }
         .q-btns { display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px; margin-top: 10px; }
-        .q-btn { background: #3d3d3d; color: white; border: none; padding: 10px 2px; border-radius: 6px; font-size: 0.8em; font-weight: bold; cursor: pointer; }
+        .q-btn { background: #3d3d3d; color: white; border: none; padding: 10px 2px; border-radius: 6px; font-size: 0.8em; font-weight: bold; }
         .q-btn.minus { color: #cf6679; }
-        .q-btn.clear { background: #111; color: #888; }
-        .main-mic { background: #bb86fc; color: #000; border: none; border-radius: 50%; width: 50px; height: 50px; display: none; margin: 0 auto 10px auto; cursor: pointer; font-size: 1.5em; align-items: center; justify-content: center; }
-        .voice-mini { background: #03dac6; color: #000; border: none; border-radius: 50%; width: 35px; height: 35px; cursor: pointer; display: none; align-items: center; justify-content: center; margin-left: 8px; }
-        .submit-btn { width: 100%; padding: 16px; background: #bb86fc; color: #000; border: none; border-radius: 12px; font-size: 1em; font-weight: bold; margin-top: 8px; cursor: pointer; }
-        #modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 1000; align-items: center; justify-content: center; padding: 15px; box-sizing: border-box; }
-        .modal-content { background: #1a1a1a; padding: 20px; border-radius: 15px; width: 100%; max-width: 400px; max-height: 85vh; overflow-y: auto; }
-        #cap { background: white !important; padding: 30px !important; color: #1a1a70 !important; font-family: 'Caveat', cursive !important; }
-        .paper-table { width: 100%; border-collapse: collapse; font-size: 1.4em; }
-        .paper-footer { margin-top: 30px; text-align: center; font-size: 0.9em; border-top: 1px solid #eee; padding-top: 10px; color: #777 !important; }
+        .main-mic { background: #bb86fc; color: #000; border: none; border-radius: 50%; width: 50px; height: 50px; display: none; margin: 0 auto 10px auto; align-items: center; justify-content: center; font-size: 1.5em; }
+        .voice-mini { background: #03dac6; color: #000; border: none; border-radius: 50%; width: 35px; height: 35px; display: none; align-items: center; justify-content: center; margin-left: 8px; }
+        .submit-btn { width: 100%; padding: 16px; background: #bb86fc; color: #000; border: none; border-radius: 12px; font-size: 1em; font-weight: bold; margin-top: 8px; }
+
+        /* Styl Kartki PNG */
+        #modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 1000; align-items: center; justify-content: center; padding: 10px; box-sizing: border-box; }
+        .modal-content { background: #1a1a1a; padding: 15px; border-radius: 15px; width: 100%; max-width: 400px; }
+        #cap { background: #fdf5e6 !important; padding: 30px !important; color: #1a1a70 !important; font-family: 'Caveat', cursive !important; border-radius: 2px; }
+        #cap * { background: transparent !important; color: #1a1a70 !important; border-color: #1a1a70 !important; }
+        .paper-table { width: 100%; border-collapse: collapse; font-size: 1.4em; margin-top: 10px; }
+        .paper-table th, .paper-table td { border: 1px solid #1a1a70; padding: 8px; text-align: center; }
+        .paper-footer { margin-top: 20px; text-align: center; font-size: 0.8em; opacity: 0.7; border-top: 1px dashed #1a1a70; padding-top: 10px; }
+        
         .listening { background: #cf6679 !important; animation: pulse 1s infinite; }
         @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(207,102,121, 0.7); } 100% { box-shadow: 0 0 0 10px rgba(207,102,121, 0); } }
     </style>
@@ -47,10 +51,10 @@
         <h2>Tysiąc PRO</h2>
         <div class="author-tag">Gra w 1000: Asystent Punktacji by Daniel Ćwikła</div>
         <div id="resumeSection" class="setup-section" style="display:none; border-color: #03dac6;">
-            <button class="submit-btn" onclick="resumeGame()">KONTYNUUJ OSTATNIĄ GRĘ</button>
+            <button class="submit-btn" onclick="resumeGame()">KONTYNUUJ GRĘ</button>
         </div>
         <div class="setup-section">
-            <label>Opcje gry:</label>
+            <label>Opcje:</label>
             <select id="playerCount" onchange="adjustInputs()">
                 <option value="" disabled selected>Liczba graczy</option>
                 <option value="2">2 graczy</option>
@@ -58,7 +62,7 @@
                 <option value="4">4 graczy</option>
             </select>
             <select id="bombCount"><option value="0">0 bomb</option><option value="1">1 bomba</option><option value="2" selected>2 bomby</option></select>
-            <label class="mode-opt"><input type="checkbox" id="mText" checked> Klawiatura ręczna</label>
+            <label class="mode-opt"><input type="checkbox" id="mText" checked> Klawiatura numeryczna</label>
             <label class="mode-opt"><input type="checkbox" id="mQuick" checked> Szybkie przyciski</label>
             <label class="mode-opt"><input type="checkbox" id="mMini" checked> Mikrofony graczy</label>
             <label class="mode-opt"><input type="checkbox" id="mGlobal" checked> Mikrofon Smart</label>
@@ -78,8 +82,8 @@
         <button class="submit-btn" style="background:#333; color:#fff; margin-top: 10px;" onclick="undo()">COFNIJ RUCH</button>
     </div>
     <div id="podium" style="display:none; text-align:center;">
-        <h2>Wyniki Końcowe 🏆</h2><div id="pList"></div>
-        <button class="submit-btn" onclick="showHistory(true)">POBIERZ KARTKĘ PNG</button>
+        <h2>Koniec Gry 🏆</h2><div id="pList"></div>
+        <button class="submit-btn" onclick="showHistory()">POBIERZ KARTKĘ PNG</button>
         <button class="submit-btn" style="background:#444;" onclick="clearStorage()">NOWA GRA</button>
     </div>
 </div>
@@ -91,7 +95,7 @@
         const c = document.getElementById('playerCount').value;
         const container = document.getElementById('nameInputs');
         container.innerHTML = '';
-        for(let i=1; i<=c; i++) container.innerHTML += `<input type="text" id="p${i}" placeholder="Imię gracza ${i}" class="setup-input">`;
+        for(let i=1; i<=c; i++) container.innerHTML += `<input type="text" id="p${i}" placeholder="Imię ${i}" class="setup-input">`;
     }
 
     function startGame() {
@@ -119,7 +123,7 @@
                     <span><strong>${p.name}</strong></span>
                     <div style="display:flex; align-items:center;">
                         ${(i===bidIdx && p.bombs > 0)? `<button style="background:#cf6679; border:none; padding:5px; border-radius:5px; margin-right:5px;" onclick="useBomb(${i})">💣</button>` : ''}
-                        <input type="text" id="score${i}" value="0" class="score-input" enterkeyhint="next" onfocus="if(this.value=='0')this.value=''" onkeydown="handleEnter(event, ${i})" style="display:${config.text?'block':'none'}">
+                        <input type="text" inputmode="decimal" id="score${i}" value="0" class="score-input" onfocus="if(this.value=='0')this.value=''" oninput="this.value = this.value.replace(/[.,]/g, '-')" onkeydown="handleEnter(event, ${i})" style="display:${config.text?'block':'none'}">
                         <button class="voice-mini" id="vbtn${i}" onclick="tryVoiceMini(${i})" style="display:${config.mini?'flex':'none'}">🎤</button>
                     </div>
                 </div>`;
@@ -152,25 +156,17 @@
         nextRound(idx);
     }
 
-    // --- LOGIKA MIKROFONU ---
-    function parseTextToNumber(text) {
-        let isMinus = text.includes("minus") || text.includes("-");
-        let num = text.match(/\d+/);
-        if(!num) return null;
-        let val = parseInt(num[0]);
-        return isMinus ? -Math.abs(val) : val;
-    }
-
     function tryVoiceMini(idx) {
         const Speech = window.SpeechRecognition || window.webkitSpeechRecognition;
-        if(!Speech) return alert("Brak wsparcia mowy");
+        if(!Speech) return;
         const rec = new Speech(); rec.lang = 'pl-PL';
         rec.onstart = () => document.getElementById(`vbtn${idx}`).classList.add('listening');
         rec.onend = () => document.getElementById(`vbtn${idx}`).classList.remove('listening');
         rec.onresult = (e) => {
             const t = e.results[0][0].transcript.toLowerCase();
-            const val = parseTextToNumber(t);
-            if(val !== null) document.getElementById(`score${idx}`).value = val;
+            let isMinus = t.includes("minus") || t.includes("-");
+            let num = t.match(/\d+/);
+            if(num) document.getElementById(`score${idx}`).value = isMinus ? -num[0] : num[0];
         };
         rec.start();
     }
@@ -182,26 +178,13 @@
         rec.onstart = () => document.getElementById('globalMic').classList.add('listening');
         rec.onend = () => document.getElementById('globalMic').classList.remove('listening');
         rec.onresult = (e) => {
-            const transcript = e.results[0][0].transcript.toLowerCase();
+            const t = e.results[0][0].transcript.toLowerCase();
             players.forEach((p, i) => {
-                const pName = p.name.toLowerCase();
-                if (transcript.includes(pName)) {
-                    const segment = transcript.split(pName)[1].trim();
-                    const words = segment.split(/\s+/);
-                    let valueStr = "";
-                    let hasMinus = false;
-                    for (let word of words) {
-                        if (word.includes("minus") || word === "-") { hasMinus = true; continue; }
-                        const numMatch = word.match(/\d+/);
-                        if (numMatch) { valueStr = numMatch[0]; break; }
-                        const isOtherName = players.some(otherP => word.includes(otherP.name.toLowerCase()));
-                        if (isOtherName) break;
-                    }
-                    if (valueStr !== "") {
-                        let finalVal = parseInt(valueStr);
-                        if (hasMinus) finalVal = -finalVal;
-                        document.getElementById(`score${i}`).value = finalVal;
-                    }
+                if (t.includes(p.name.toLowerCase())) {
+                    const seg = t.split(p.name.toLowerCase())[1].trim();
+                    let isMinus = seg.includes("minus") || seg.includes("-");
+                    let num = seg.match(/\d+/);
+                    if(num) document.getElementById(`score${i}`).value = isMinus ? -num[0] : num[0];
                 }
             });
         };
@@ -209,16 +192,35 @@
     }
 
     function showWin() { document.getElementById('game').style.display='none'; document.getElementById('podium').style.display='block'; const sorted = [...players].sort((a,b) => b.score - a.score); document.getElementById('pList').innerHTML = sorted.map((p,i) => `<div class="setup-section">${i+1}. ${p.name}: ${p.score} pkt</div>`).join(''); }
+    
     function showHistory() {
         const modal = document.getElementById('modal'); modal.style.display = 'flex';
-        document.getElementById('modalBody').innerHTML = `<div id="cap"><h3 style="text-align:center;">Karta Wyników</h3><table class="paper-table"><thead><tr><th>#</th>${players.map(p => `<th>${p.name}</th>`).join('')}</tr></thead><tbody>${historyRows.map((r, i) => `<tr><td>${i+1}</td>${r.map((s, pIdx) => `<td>${bombLog.some(b => b.round === i+1 && b.player === pIdx) ? '💣' : s}</td>`).join('')}</tr>`).join('')}</tbody></table><div class="paper-footer">Gra w 1000: Asystent Punktacji by Daniel Ćwikła</div></div><button class="submit-btn" onclick="downloadImg()">POBIERZ OBRAZ</button><button class="submit-btn" style="background:#444;" onclick="document.getElementById('modal').style.display='none'">ZAMKNIJ</button>`;
+        const dzis = new Date().toLocaleDateString('pl-PL');
+        document.getElementById('modalBody').innerHTML = `
+            <div id="cap">
+                <div style="text-align:right;">${dzis}</div>
+                <h2 style="text-align:center; margin:10px 0;">Karta Wyników</h2>
+                <table class="paper-table">
+                    <thead><tr><th>#</th>${players.map(p => `<th>${p.name}</th>`).join('')}</tr></thead>
+                    <tbody>${historyRows.map((r, i) => `<tr><td>${i+1}</td>${r.map((s, pIdx) => `<td>${bombLog.some(b => b.round === i+1 && b.player === pIdx) ? '💣' : s}</td>`).join('')}</tr>`).join('')}</tbody>
+                </table>
+                <div class="paper-footer">Gra w 1000: Asystent Punktacji by Daniel Ćwikła</div>
+            </div>
+            <button class="submit-btn" onclick="downloadImg()">ZAPISZ PNG</button>
+            <button class="submit-btn" style="background:#444; color:#fff;" onclick="document.getElementById('modal').style.display='none'">ZAMKNIJ</button>`;
     }
-    function downloadImg() { html2canvas(document.getElementById('cap'), { backgroundColor: "#ffffff", scale: 2 }).then(canvas => { const link = document.createElement('a'); link.download = 'wyniki.png'; link.href = canvas.toDataURL(); link.click(); }); }
-    function save() { localStorage.setItem('tysiac_daniel_final', JSON.stringify({players, dealerIdx, historyRows, bombLimit, config, bombLog})); }
-    function resumeGame() { const d = JSON.parse(localStorage.getItem('tysiac_daniel_final')); players = d.players; dealerIdx = d.dealerIdx; historyRows = d.historyRows; bombLimit = d.bombLimit; config = d.config; bombLog = d.bombLog || []; document.getElementById('setup').style.display='none'; document.getElementById('game').style.display='block'; if(config.global) document.getElementById('globalMic').style.display = 'flex'; render(); }
-    function clearStorage() { localStorage.removeItem('tysiac_daniel_final'); location.reload(); }
+
+    function downloadImg() {
+        html2canvas(document.getElementById('cap'), { backgroundColor: "#fdf5e6", scale: 2 }).then(canvas => {
+            const link = document.createElement('a'); link.download = 'wyniki_1000.png'; link.href = canvas.toDataURL(); link.click();
+        });
+    }
+
+    function save() { localStorage.setItem('tysiac_daniel_vFinal', JSON.stringify({players, dealerIdx, historyRows, bombLimit, config, bombLog})); }
+    function resumeGame() { const d = JSON.parse(localStorage.getItem('tysiac_daniel_vFinal')); players = d.players; dealerIdx = d.dealerIdx; historyRows = d.historyRows; bombLimit = d.bombLimit; config = d.config; bombLog = d.bombLog || []; document.getElementById('setup').style.display='none'; document.getElementById('game').style.display='block'; if(config.global) document.getElementById('globalMic').style.display = 'flex'; render(); }
+    function clearStorage() { localStorage.removeItem('tysiac_daniel_vFinal'); location.reload(); }
     function undo() { if(!historyRows.length) return; historyRows.pop(); bombLog = bombLog.filter(b => b.round <= historyRows.length); if(!historyRows.length) { players.forEach(p => p.score = 0); dealerIdx = 0; } else { const ls = historyRows[historyRows.length-1]; players.forEach((p, i) => p.score = ls[i]); dealerIdx = (dealerIdx - 1 + players.length) % players.length; } save(); render(); }
-    window.onload = () => { if(localStorage.getItem('tysiac_daniel_final')) document.getElementById('resumeSection').style.display = 'block'; };
+    window.onload = () => { if(localStorage.getItem('tysiac_daniel_vFinal')) document.getElementById('resumeSection').style.display = 'block'; };
 </script>
 </body>
 </html>
