@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <title>Gra w 1000 - Daniel Ćwikła</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background: #0f0f0f; color: #f0f0f0; margin: 0; padding: 10px; }
+        .card { background: #1a1a1a; padding: 15px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.7); width: 100%; max-width: 450px; margin: auto; border: 1px solid #333; position: relative; }
+        
+        h2 { color: #bb86fc; text-align: center; margin-bottom: 5px; }
+        .author-tag { text-align: center; font-size: 0.75em; color: #03dac6; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 1px; font-weight: bold; }
+
+        .setup-section { margin-bottom: 15px; padding: 15px; background: #252525; border-radius: 12px; border: 1px solid #383838; }
+        label { display: block; margin-bottom: 8px; font-weight: bold; color: #03dac6; font-size: 0.9em; }
+        select, .setup-input { width: 100%; padding: 12px; margin-bottom: 10px; background: #333; color: white; border: 1px solid #444; border-radius: 8px; font-size: 1em; box-sizing: border-box; }
+        
+        .mode-opt { display: flex; align-items: center; margin-bottom: 8px; font-size: 0.85em; }
+        .mode-opt input { margin-right: 10px; }
+
+        .dealer-banner { background: #03dac6; color: #000; padding: 10px; text-align: center; font-weight: bold; border-radius: 10px; margin-bottom: 15px; font-size: 0.8em; text-transform: uppercase; }
+
+        table { width: 100%; border-collapse: collapse; margin-bottom: 15px; background: #222; border-radius: 12px; overflow: hidden; }
+        th { background: #333; color: #03dac6; padding: 10px; font-size: 0.7em; }
+        td { padding: 10px; text-align: center; border-bottom: 1px solid #2d2d2d; }
+
+        .player-box { background: #252525; padding: 12px; border-radius: 15px; margin-bottom: 10px; border-left: 5px solid #444; transition: all 0.2s; }
+        .is-bidder-box { border-left-color: #bb86fc; background: #2d2636; }
+        
+        .player-box:focus-within { background: #1e3a3a; border-left-color: #03dac6; transform: scale(1.01); }
+        .score-input { width: 85px; padding: 12px; background: #000; border: 2px solid #444; color: #fff; border-radius: 8px; text-align: center; font-size: 1.3em; font-weight: bold; outline: none; }
+        .score-input:focus { border-color: #03dac6; color: #03dac6; }
+
+        .q-btns { display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px; margin-top: 10px; }
+        .q-btn { background: #3d3d3d; color: white; border: none; padding: 10px 2px; border-radius: 6px; font-size: 0.8em; font-weight: bold; cursor: pointer; }
+        .q-btn.minus { color: #cf6679; }
+        .q-btn.clear { background: #111; color: #888; }
+
+        .main-mic { background: #bb86fc; color: #000; border: none; border-radius: 50%; width: 50px; height: 50px; display: none; margin: 0 auto 10px auto; cursor: pointer; font-size: 1.5em; align-items: center; justify-content: center; }
+        .voice-mini { background: #03dac6; color: #000; border: none; border-radius: 50%; width: 35px; height: 35px; cursor: pointer; display: none; align-items: center; justify-content: center; margin-left: 8px; }
+
+        .submit-btn { width: 100%; padding: 16px; background: #bb86fc; color: #000; border: none; border-radius: 12px; font-size: 1em; font-weight: bold; margin-top: 8px; cursor: pointer; }
+
+        #modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 1000; align-items: center; justify-content: center; padding: 15px; box-sizing: border-box; }
+        .modal-content { background: #1a1a1a; padding: 20px; border-radius: 15px; width: 100%; max-width: 400px; max-height: 85vh; overflow-y: auto; }
+
+        #cap { background: white !important; padding: 30px !important; color: #1a1a70 !important; font-family: 'Caveat', cursive !important; box-sizing: border-box; position: relative; min-height: 400px; }
+        #cap * { background: transparent !important; color: #1a1a70 !important; }
+        .paper-table { width: 100%; border-collapse: collapse; font-size: 1.4em; }
+        .paper-table th { border-bottom: 2px solid #1a1a70; padding: 5px; }
+        .paper-table td { border-bottom: 1px solid #ddd; padding: 5px; text-align: center; }
+        .paper-footer { margin-top: 30px; text-align: center; font-size: 0.9em; border-top: 1px solid #eee; padding-top: 10px; color: #777 !important; }
+
+        .listening { background: #cf6679 !important; animation: pulse 1s infinite; }
+        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(207,102,121, 0.7); } 100% { box-shadow: 0 0 0 10px rgba(207,102,121, 0); } }
+    </style>
+</head>
+<body>
+
+<div id="modal"><div class="modal-content" id="modalBody"></div></div>
+
+<div class="card">
+    <div id="setup">
+        <h2 style="margin-top: 20px;">Tysiąc PRO</h2>
+        <div class="author-tag">Gra w 1000: Asystent Punktacji by Daniel Ćwikła</div>
+        <div id="resumeSection" class="setup-section" style="display:none; border-color: #03dac6;">
+            <button class="submit-btn" onclick="resumeGame()">KONTYNUUJ OSTATNIĄ GRĘ</button>
+        </div>
+        <div class="setup-section">
+            <label>Opcje gry:</label>
+            <select id="playerCount" onchange="adjustInputs()">
+                <option value="" disabled selected>Liczba graczy</option>
+                <option value="2">2 graczy</option>
+                <option value="3">3 graczy</option>
+                <option value="4">4 graczy</option>
+            </select>
+            <select id="bombCount"><option value="0">0 bomb</option><option value="1">1 bomba</option><option value="2" selected>2 bomby</option></select>
+            
+            <label style="margin-top:10px;">Interfejs:</label>
+            <label class="mode-opt"><input type="checkbox" id="mText" checked> Klawiatura ręczna</label>
+            <label class="mode-opt"><input type="checkbox" id="mQuick" checked> Szybkie przyciski</label>
+            <label class="mode-opt"><input type="checkbox" id="mMini" checked> Mikrofony graczy</label>
+            <label class="mode-opt"><input type="checkbox" id="mGlobal" checked> Mikrofon Smart</label>
+        </div>
+        <div id="nameInputs"></div>
+        <button class="submit-btn" onclick="startGame()">ZAPISZ I GRAJ</button>
+    </div>
+
+    <div id="game" style="display:none;">
+        <div id="dealerBanner" class="dealer-banner"></div>
+        <button id="globalMic" class="main-mic" onclick="tryVoiceGlobal()">🎤</button>
+        <table>
+            <thead><tr><th>Gracz</th><th>Suma</th><th>💣</th></tr></thead>
+            <tbody id="tBody"></tbody>
+        </table>
+        <div id="entryArea"></div>
+        <button class="submit-btn" onclick="nextRound()">ZATWIERDŹ RUNDĘ</button>
+        <button class="submit-btn" style="background:#333; color:#fff; margin-top: 10px;" onclick="undo()">COFNIJ RUCH</button>
+    </div>
+
+    <div id="podium" style="display:none; text-align:center;">
+        <h2>Wyniki Końcowe 🏆</h2>
+        <div id="pList"></div>
+        <button class="submit-btn" onclick="showHistory(true)">POBIERZ KARTKĘ PNG</button>
+        <button class="submit-btn" style="background:#444;" onclick="clearStorage()">NOWA GRA</button>
+    </div>
+</div>
+
+<script>
+    let players = [], dealerIdx = 0, historyRows = [], bombLimit = 2, config = {}, bombLog = [];
+
+    function adjustInputs() {
+        const c = document.getElementById('playerCount').value;
+        const container = document.getElementById('nameInputs');
+        container.innerHTML = '';
+        for(let i=1; i<=c; i++) container.innerHTML += `<input type="text" id="p${i}" placeholder="Imię gracza ${i}" class="setup-input">`;
+    }
+
+    function startGame() {
+        const c = document.getElementById('playerCount').value;
+        if(!c) return alert("Wybierz ilość graczy!");
+        bombLimit = parseInt(document.getElementById('bombCount').value);
+        config = { 
+            text: document.getElementById('mText').checked, 
+            quick: document.getElementById('mQuick').checked, 
+            mini: document.getElementById('mMini').checked, 
+            global: document.getElementById('mGlobal').checked 
+        };
+        for(let i=1; i<=c; i++) {
+            const n = document.getElementById(`p${i}`).value.trim() || `G${i}`;
+            players.push({ name: n, score: 0, bombs: bombLimit });
+        }
+        document.getElementById('setup').style.display='none';
+        document.getElementById('game').style.display='block';
+        if(config.global) document.getElementById('globalMic').style.display = 'flex';
+        render();
+    }
+
+    function render() {
+        const tbody = document.getElementById('tBody');
+        const entry = document.getElementById('entryArea');
+        const bidIdx = (dealerIdx + 1) % players.length;
+        document.getElementById('dealerBanner').innerText = `ROZDAJE: ${players[dealerIdx].name}`;
+        tbody.innerHTML = ''; entry.innerHTML = '';
+        
+        players.forEach((p, i) => {
+            const isBidder = (i === bidIdx);
+            tbody.innerHTML += `<tr><td>${p.name}${isBidder?'*':''}</td><td>${p.score}</td><td>${"💣".repeat(p.bombs)}</td></tr>`;
+            
+            let html = `
+                <div class="player-box ${isBidder?'is-bidder-box':''}">
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <span><strong>${p.name}</strong></span>
+                        <div style="display:flex; align-items:center;">
+                            ${(isBidder && p.bombs > 0)? `<button style="background:#cf6679; border:none; padding:5px; border-radius:5px; margin-right:5px;" onclick="useBomb(${i})">💣</button>` : ''}
+                            <input type="text" id="score${i}" value="0" 
+                                class="score-input" enterkeyhint="next" inputmode="decimal"
+                                onfocus="if(this.value=='0')this.value=''" 
+                                onblur="if(this.value=='')this.value='0'"
+                                oninput="checkMinus(this)"
+                                onkeydown="handleEnter(event, ${i})"
+                                style="display:${config.text?'block':'none'}">
+                            <button class="voice-mini" id="vbtn${i}" onclick="tryVoiceMini(${i})" style="display:${config.mini?'flex':'none'}">🎤</button>
+                        </div>
+                    </div>`;
+            
+            if(config.quick) {
+                html += `
+                    <div class="q-btns">
+                        <button class="q-btn" onclick="addS(${i}, 100)">+100</button>
+                        <button class="q-btn" onclick="addS(${i}, 50)">+50</button>
+                        <button class="q-btn" onclick="addS(${i}, 20)">+20</button>
+                        <button class="q-btn" onclick="addS(${i}, 10)">+10</button>
+                        <button class="q-btn minus" onclick="addS(${i}, -100)">-100</button>
+                        <button class="q-btn minus" onclick="addS(${i}, -20)">-20</button>
+                        <button class="q-btn minus" onclick="addS(${i}, -10)">-10</button>
+                        <button class="q-btn clear" onclick="setS(${i}, 0)">C</button>
+                    </div>`;
+            }
+            entry.innerHTML += html + `</div>`;
+        });
+    }
+
+    function handleEnter(event, currentIndex) {
+        if (event.key === "Enter") {
+            event.preventDefault();
+            const nextInput = document.getElementById(`score${currentIndex + 1}`);
+            if (nextInput) nextInput.focus(); else document.activeElement.blur();
+        }
+    }
+
+    function checkMinus(el) { if(el.value.startsWith('.')) el.value = '-' + el.value.substring(1); }
+    function addS(idx, v) { const el = document.getElementById(`score${idx}`); el.value = (parseInt(el.value) || 0) + v; }
+    function setS(idx, v) { document.getElementById(`score${idx}`).value = v; }
+
+    function nextRound(bomberIdx = -1) {
+        players.forEach((p, i) => { 
+            p.score += parseInt(document.getElementById(`score${i}`).value) || 0; 
+            if(p.score > 1000) p.score = 1000; 
+        });
+        historyRows.push(players.map(p => p.score));
+        if(bomberIdx !== -1) bombLog.push({round: historyRows.length, player: bomberIdx});
+        dealerIdx = (dealerIdx + 1) % players.length;
+        save();
+        if(players.some(p => p.score >= 1000)) showWin(); else render();
+    }
+
+    function useBomb(idx) {
+        if(!confirm("Użyć bomby?")) return;
+        players[idx].bombs--;
+        players.forEach((p, i) => { 
+            if(i !== idx) { 
+                if(p.score < 800) {
+                    if(players.length === 4 && i === dealerIdx) return;
+                    p.score += 60; 
+                }
+            } 
+        });
+        nextRound(idx);
+    }
+
+    function showWin() {
+        document.getElementById('game').style.display='none';
+        document.getElementById('podium').style.display='block';
+        const sorted = [...players].sort((a,b) => b.score - a.score);
+        document.getElementById('pList').innerHTML = sorted.map((p,i) => `<div class="setup-section">${i+1}. ${p.name}: ${p.score} pkt</div>`).join('');
+    }
+
+    function showHistory(isFinish = false) {
+        const modal = document.getElementById('modal');
+        modal.style.display = 'flex';
+        const dzis = new Date().toLocaleDateString('pl-PL');
+        document.getElementById('modalBody').innerHTML = `
+            <div id="cap">
+                <div style="text-align:right; font-size:1.2em;">${dzis}</div>
+                <h3 style="text-align:center;">Karta Wyników</h3>
+                <table class="paper-table">
+                    <thead><tr><th>#</th>${players.map(p => `<th>${p.name}</th>`).join('')}</tr></thead>
+                    <tbody>${historyRows.map((r, i) => `<tr><td>${i+1}</td>${r.map((s, pIdx) => `<td>${bombLog.some(b => b.round === i+1 && b.player === pIdx) ? '💣' : s}</td>`).join('')}</tr>`).join('')}</tbody>
+                </table>
+                <div class="paper-footer">Gra w 1000: Asystent Punktacji by Daniel Ćwikła</div>
+            </div>
+            <button class="submit-btn" onclick="downloadImg()">POBIERZ OBRAZ</button>
+            <button class="submit-btn" style="background:#444;" onclick="document.getElementById('modal').style.display='none'">ZAMKNIJ</button>`;
+    }
+
+    function downloadImg() {
+        html2canvas(document.getElementById('cap'), { backgroundColor: "#ffffff", scale: 2 }).then(canvas => {
+            const link = document.createElement('a'); link.download = 'wyniki_1000_daniel_cwikla.png'; link.href = canvas.toDataURL(); link.click();
+        });
+    }
+
+    function save() { localStorage.setItem('tysiac_daniel_cwikla_vFinal', JSON.stringify({players, dealerIdx, historyRows, bombLimit, config, bombLog})); }
+    function resumeGame() {
+        const d = JSON.parse(localStorage.getItem('tysiac_daniel_cwikla_vFinal'));
+        players = d.players; dealerIdx = d.dealerIdx; historyRows = d.historyRows; bombLimit = d.bombLimit; config = d.config; bombLog = d.bombLog || [];
+        document.getElementById('setup').style.display='none'; document.getElementById('game').style.display='block'; 
+        if(config.global) document.getElementById('globalMic').style.display = 'flex';
+        render();
+    }
+    function clearStorage() { localStorage.removeItem('tysiac_daniel_cwikla_vFinal'); location.reload(); }
+    
+    function undo() {
+        if(!historyRows.length) return;
+        historyRows.pop();
+        bombLog = bombLog.filter(b => b.round <= historyRows.length);
+        if(!historyRows.length) { players.forEach(p => p.score = 0); dealerIdx = 0; }
+        else {
+            const ls = historyRows[historyRows.length-1];
+            players.forEach((p, i) => p.score = ls[i]);
+            dealerIdx = (dealerIdx - 1 + players.length) % players.length;
+        }
+        save(); render();
+    }
+
+    function tryVoiceGlobal() {
+        const Speech = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if(!Speech) return;
+        const rec = new Speech(); rec.lang = 'pl-PL';
+        rec.onstart = () => document.getElementById('globalMic').classList.add('listening');
+        rec.onend = () => document.getElementById('globalMic').classList.remove('listening');
+        rec.onresult = (e) => {
+            const t = e.results[0][0].transcript.toLowerCase();
+            players.forEach((p, i) => { if(t.includes(p.name.toLowerCase())) { const m = t.match(/\d+/); if(m) document.getElementById(`score${i}`).value = m[0]; } });
+        };
+        rec.start();
+    }
+
+    function tryVoiceMini(idx) {
+        const Speech = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if(!Speech) return;
+        const rec = new Speech(); rec.lang = 'pl-PL';
+        rec.onstart = () => document.getElementById(`vbtn${idx}`).classList.add('listening');
+        rec.onend = () => document.getElementById(`vbtn${idx}`).classList.remove('listening');
+        rec.onresult = (e) => { const m = e.results[0][0].transcript.match(/\d+/); if(m) document.getElementById(`score${idx}`).value = m[0]; };
+        rec.start();
+    }
+
+    window.onload = () => { if(localStorage.getItem('tysiac_daniel_cwikla_vFinal')) document.getElementById('resumeSection').style.display = 'block'; };
+</script>
+</body>
+</html>
