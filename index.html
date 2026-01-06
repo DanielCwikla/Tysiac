@@ -31,14 +31,27 @@
         .voice-mini { background: #03dac6; color: #000; border: none; border-radius: 50%; width: 35px; height: 35px; display: none; align-items: center; justify-content: center; margin-left: 8px; }
         .submit-btn { width: 100%; padding: 16px; background: #bb86fc; color: #000; border: none; border-radius: 12px; font-size: 1em; font-weight: bold; margin-top: 8px; }
 
-        /* Styl Kartki PNG */
+        /* MODAL I KARTKA W KRATKĘ */
         #modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 1000; align-items: center; justify-content: center; padding: 10px; box-sizing: border-box; }
         .modal-content { background: #1a1a1a; padding: 15px; border-radius: 15px; width: 100%; max-width: 400px; }
-        #cap { background: #fdf5e6 !important; padding: 30px !important; color: #1a1a70 !important; font-family: 'Caveat', cursive !important; border-radius: 2px; }
+        
+        #cap { 
+            background-color: #fdfdfd !important;
+            background-image: 
+                linear-gradient(to right, rgba(0, 150, 255, 0.1) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(0, 150, 255, 0.1) 1px, transparent 1px) !important;
+            background-size: 20px 20px !important;
+            padding: 30px !important; 
+            color: #1a1a70 !important; 
+            font-family: 'Caveat', cursive !important; 
+            border: 1px solid #ccc;
+            position: relative;
+        }
+
         #cap * { background: transparent !important; color: #1a1a70 !important; border-color: #1a1a70 !important; }
-        .paper-table { width: 100%; border-collapse: collapse; font-size: 1.4em; margin-top: 10px; }
+        .paper-table { width: 100%; border-collapse: collapse; font-size: 1.4em; margin-top: 10px; border: 2px solid #1a1a70; }
         .paper-table th, .paper-table td { border: 1px solid #1a1a70; padding: 8px; text-align: center; }
-        .paper-footer { margin-top: 20px; text-align: center; font-size: 0.8em; opacity: 0.7; border-top: 1px dashed #1a1a70; padding-top: 10px; }
+        .paper-footer { margin-top: 25px; text-align: center; font-size: 0.9em; border-top: 1px solid #1a1a70; padding-top: 10px; }
         
         .listening { background: #cf6679 !important; animation: pulse 1s infinite; }
         @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(207,102,121, 0.7); } 100% { box-shadow: 0 0 0 10px rgba(207,102,121, 0); } }
@@ -51,10 +64,10 @@
         <h2>Tysiąc PRO</h2>
         <div class="author-tag">Gra w 1000: Asystent Punktacji by Daniel Ćwikła</div>
         <div id="resumeSection" class="setup-section" style="display:none; border-color: #03dac6;">
-            <button class="submit-btn" onclick="resumeGame()">KONTYNUUJ GRĘ</button>
+            <button class="submit-btn" onclick="resumeGame()">KONTYNUUJ OSTATNIĄ GRĘ</button>
         </div>
         <div class="setup-section">
-            <label>Opcje:</label>
+            <label>Ustawienia:</label>
             <select id="playerCount" onchange="adjustInputs()">
                 <option value="" disabled selected>Liczba graczy</option>
                 <option value="2">2 graczy</option>
@@ -70,6 +83,7 @@
         <div id="nameInputs"></div>
         <button class="submit-btn" onclick="startGame()">ZAPISZ I GRAJ</button>
     </div>
+
     <div id="game" style="display:none;">
         <div id="dealerBanner" class="dealer-banner"></div>
         <button id="globalMic" class="main-mic" onclick="tryVoiceGlobal()">🎤</button>
@@ -81,9 +95,10 @@
         <button class="submit-btn" onclick="nextRound()">ZATWIERDŹ RUNDĘ</button>
         <button class="submit-btn" style="background:#333; color:#fff; margin-top: 10px;" onclick="undo()">COFNIJ RUCH</button>
     </div>
+
     <div id="podium" style="display:none; text-align:center;">
         <h2>Koniec Gry 🏆</h2><div id="pList"></div>
-        <button class="submit-btn" onclick="showHistory()">POBIERZ KARTKĘ PNG</button>
+        <button class="submit-btn" onclick="showHistory()">POBIERZ KARTKĘ W KRATKĘ</button>
         <button class="submit-btn" style="background:#444;" onclick="clearStorage()">NOWA GRA</button>
     </div>
 </div>
@@ -156,6 +171,7 @@
         nextRound(idx);
     }
 
+    // MIKROFONY
     function tryVoiceMini(idx) {
         const Speech = window.SpeechRecognition || window.webkitSpeechRecognition;
         if(!Speech) return;
@@ -198,29 +214,36 @@
         const dzis = new Date().toLocaleDateString('pl-PL');
         document.getElementById('modalBody').innerHTML = `
             <div id="cap">
-                <div style="text-align:right;">${dzis}</div>
-                <h2 style="text-align:center; margin:10px 0;">Karta Wyników</h2>
+                <div style="text-align:right; font-size:1.1em; margin-bottom:5px;">${dzis}</div>
+                <h2 style="text-align:center; margin:0 0 15px 0; text-decoration: underline;">WYNIKI GRY</h2>
                 <table class="paper-table">
                     <thead><tr><th>#</th>${players.map(p => `<th>${p.name}</th>`).join('')}</tr></thead>
                     <tbody>${historyRows.map((r, i) => `<tr><td>${i+1}</td>${r.map((s, pIdx) => `<td>${bombLog.some(b => b.round === i+1 && b.player === pIdx) ? '💣' : s}</td>`).join('')}</tr>`).join('')}</tbody>
                 </table>
                 <div class="paper-footer">Gra w 1000: Asystent Punktacji by Daniel Ćwikła</div>
             </div>
-            <button class="submit-btn" onclick="downloadImg()">ZAPISZ PNG</button>
-            <button class="submit-btn" style="background:#444; color:#fff;" onclick="document.getElementById('modal').style.display='none'">ZAMKNIJ</button>`;
+            <button class="submit-btn" onclick="downloadImg()">ZAPISZ KARTKĘ JAKO PNG</button>
+            <button class="submit-btn" style="background:#444; color:#fff;" onclick="document.getElementById('modal').style.display='none'">POWRÓT</button>`;
     }
 
     function downloadImg() {
-        html2canvas(document.getElementById('cap'), { backgroundColor: "#fdf5e6", scale: 2 }).then(canvas => {
-            const link = document.createElement('a'); link.download = 'wyniki_1000.png'; link.href = canvas.toDataURL(); link.click();
+        html2canvas(document.getElementById('cap'), { 
+            backgroundColor: "#fdfdfd", 
+            scale: 3,
+            logging: false 
+        }).then(canvas => {
+            const link = document.createElement('a'); 
+            link.download = 'tysiac_zeszyt_daniel.png'; 
+            link.href = canvas.toDataURL('image/png'); 
+            link.click();
         });
     }
 
-    function save() { localStorage.setItem('tysiac_daniel_vFinal', JSON.stringify({players, dealerIdx, historyRows, bombLimit, config, bombLog})); }
-    function resumeGame() { const d = JSON.parse(localStorage.getItem('tysiac_daniel_vFinal')); players = d.players; dealerIdx = d.dealerIdx; historyRows = d.historyRows; bombLimit = d.bombLimit; config = d.config; bombLog = d.bombLog || []; document.getElementById('setup').style.display='none'; document.getElementById('game').style.display='block'; if(config.global) document.getElementById('globalMic').style.display = 'flex'; render(); }
-    function clearStorage() { localStorage.removeItem('tysiac_daniel_vFinal'); location.reload(); }
+    function save() { localStorage.setItem('tysiac_daniel_grid', JSON.stringify({players, dealerIdx, historyRows, bombLimit, config, bombLog})); }
+    function resumeGame() { const d = JSON.parse(localStorage.getItem('tysiac_daniel_grid')); players = d.players; dealerIdx = d.dealerIdx; historyRows = d.historyRows; bombLimit = d.bombLimit; config = d.config; bombLog = d.bombLog || []; document.getElementById('setup').style.display='none'; document.getElementById('game').style.display='block'; if(config.global) document.getElementById('globalMic').style.display = 'flex'; render(); }
+    function clearStorage() { localStorage.removeItem('tysiac_daniel_grid'); location.reload(); }
     function undo() { if(!historyRows.length) return; historyRows.pop(); bombLog = bombLog.filter(b => b.round <= historyRows.length); if(!historyRows.length) { players.forEach(p => p.score = 0); dealerIdx = 0; } else { const ls = historyRows[historyRows.length-1]; players.forEach((p, i) => p.score = ls[i]); dealerIdx = (dealerIdx - 1 + players.length) % players.length; } save(); render(); }
-    window.onload = () => { if(localStorage.getItem('tysiac_daniel_vFinal')) document.getElementById('resumeSection').style.display = 'block'; };
+    window.onload = () => { if(localStorage.getItem('tysiac_daniel_grid')) document.getElementById('resumeSection').style.display = 'block'; };
 </script>
 </body>
 </html>
