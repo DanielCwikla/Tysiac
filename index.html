@@ -47,10 +47,10 @@
         <h2>Tysiąc PRO</h2>
         <div class="author-tag">Gra w 1000: Asystent Punktacji by Daniel Ćwikła</div>
         <div id="resumeSection" class="setup-section" style="display:none; border-color: #03dac6;">
-            <button class="submit-btn" onclick="resumeGame()">KONTYNUUJ GRĘ</button>
+            <button class="submit-btn" onclick="resumeGame()">KONTYNUUJ OSTATNIĄ GRĘ</button>
         </div>
         <div class="setup-section">
-            <label>Opcje:</label>
+            <label>Opcje gry:</label>
             <select id="playerCount" onchange="adjustInputs()">
                 <option value="" disabled selected>Liczba graczy</option>
                 <option value="2">2 graczy</option>
@@ -58,7 +58,7 @@
                 <option value="4">4 graczy</option>
             </select>
             <select id="bombCount"><option value="0">0 bomb</option><option value="1">1 bomba</option><option value="2" selected>2 bomby</option></select>
-            <label class="mode-opt"><input type="checkbox" id="mText" checked> Klawiatura</label>
+            <label class="mode-opt"><input type="checkbox" id="mText" checked> Klawiatura ręczna</label>
             <label class="mode-opt"><input type="checkbox" id="mQuick" checked> Szybkie przyciski</label>
             <label class="mode-opt"><input type="checkbox" id="mMini" checked> Mikrofony graczy</label>
             <label class="mode-opt"><input type="checkbox" id="mGlobal" checked> Mikrofon Smart</label>
@@ -91,7 +91,7 @@
         const c = document.getElementById('playerCount').value;
         const container = document.getElementById('nameInputs');
         container.innerHTML = '';
-        for(let i=1; i<=c; i++) container.innerHTML += `<input type="text" id="p${i}" placeholder="Imię ${i}" class="setup-input">`;
+        for(let i=1; i<=c; i++) container.innerHTML += `<input type="text" id="p${i}" placeholder="Imię gracza ${i}" class="setup-input">`;
     }
 
     function startGame() {
@@ -156,8 +156,9 @@
     function parseTextToNumber(text) {
         let isMinus = text.includes("minus") || text.includes("-");
         let num = text.match(/\d+/);
-        if(!num) return 0;
-        return isMinus ? -Math.abs(num[0]) : parseInt(num[0]);
+        if(!num) return null;
+        let val = parseInt(num[0]);
+        return isMinus ? -Math.abs(val) : val;
     }
 
     function tryVoiceMini(idx) {
@@ -168,7 +169,8 @@
         rec.onend = () => document.getElementById(`vbtn${idx}`).classList.remove('listening');
         rec.onresult = (e) => {
             const t = e.results[0][0].transcript.toLowerCase();
-            document.getElementById(`score${idx}`).value = parseTextToNumber(t);
+            const val = parseTextToNumber(t);
+            if(val !== null) document.getElementById(`score${idx}`).value = val;
         };
         rec.start();
     }
@@ -180,14 +182,26 @@
         rec.onstart = () => document.getElementById('globalMic').classList.add('listening');
         rec.onend = () => document.getElementById('globalMic').classList.remove('listening');
         rec.onresult = (e) => {
-            const t = e.results[0][0].transcript.toLowerCase();
-            // Szukamy imienia, a potem pierwszej liczby po nim
+            const transcript = e.results[0][0].transcript.toLowerCase();
             players.forEach((p, i) => {
                 const pName = p.name.toLowerCase();
-                if(t.includes(pName)) {
-                    const afterName = t.split(pName)[1];
-                    const val = parseTextToNumber(afterName);
-                    if(val !== 0 || afterName.includes("0")) document.getElementById(`score${i}`).value = val;
+                if (transcript.includes(pName)) {
+                    const segment = transcript.split(pName)[1].trim();
+                    const words = segment.split(/\s+/);
+                    let valueStr = "";
+                    let hasMinus = false;
+                    for (let word of words) {
+                        if (word.includes("minus") || word === "-") { hasMinus = true; continue; }
+                        const numMatch = word.match(/\d+/);
+                        if (numMatch) { valueStr = numMatch[0]; break; }
+                        const isOtherName = players.some(otherP => word.includes(otherP.name.toLowerCase()));
+                        if (isOtherName) break;
+                    }
+                    if (valueStr !== "") {
+                        let finalVal = parseInt(valueStr);
+                        if (hasMinus) finalVal = -finalVal;
+                        document.getElementById(`score${i}`).value = finalVal;
+                    }
                 }
             });
         };
